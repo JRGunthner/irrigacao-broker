@@ -1,0 +1,33 @@
+version: "3.3"
+services:
+  broker:
+    build: .
+    image: broker:latest
+    container_name: broker
+    restart: unless-stopped
+    hostname: mqtt
+    deploy:
+      resources:
+        limits:
+          cpus: 0.50
+          memory: 256M
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - COMPOSE_PROJECT_NAME=broker
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - ./data:/var/lib/rabbitmq
+      - ./log:/var/log/rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "2"
+    networks:
+      - docker
+networks:
+  docker:
+    name: docker
